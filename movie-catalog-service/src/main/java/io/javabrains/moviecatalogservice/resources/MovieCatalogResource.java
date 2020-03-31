@@ -1,5 +1,6 @@
 package io.javabrains.moviecatalogservice.resources;
 
+import com.netflix.discovery.DiscoveryClient;
 import io.javabrains.moviecatalogservice.model.CatalogItem;
 import io.javabrains.moviecatalogservice.model.Movie;
 import io.javabrains.moviecatalogservice.model.UserRating;
@@ -22,11 +23,16 @@ public class MovieCatalogResource {
 
     private final WebClient.Builder webClientBuilder;
 
+    // for custom control, if needed
+    private final DiscoveryClient discoveryClient;
+
     @Autowired
     public MovieCatalogResource(RestTemplate restTemplate,
-                                WebClient.Builder webClientBuilder) {
+                                WebClient.Builder webClientBuilder,
+                                DiscoveryClient discoveryClient) {
         this.restTemplate = restTemplate;
         this.webClientBuilder = webClientBuilder;
+        this.discoveryClient = discoveryClient;
     }
 
     @GetMapping("/{userId}")
@@ -35,7 +41,7 @@ public class MovieCatalogResource {
         // get all rated movie IDs
         UserRating ratings = webClientBuilder.build()
                 .get()
-                .uri("http://localhost:8083/ratings/users/" + userId)
+                .uri("http://rating-data-service/ratings/users/" + userId)
                 .retrieve()
                 .bodyToMono(UserRating.class)
                 .block();
@@ -43,7 +49,7 @@ public class MovieCatalogResource {
         return ratings.getUserRatings().stream()
                 .map(rating -> {
                     // for each movie ID call movie info service and get details
-                    Movie movie = restTemplate.getForObject("http://localhost:8082/movies/" + rating.getMovieId(), Movie.class);
+                    Movie movie = restTemplate.getForObject("http://movie-info-service/movies/" + rating.getMovieId(), Movie.class);
                     // put them together
                     return new CatalogItem(movie.getName(), "Desc", rating.getRating());
                 })
