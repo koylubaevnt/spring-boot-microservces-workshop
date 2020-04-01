@@ -9,5 +9,5 @@ import java.util.List;
 @Setter
 public class UserRating {
 
-    private List<Rating> userRatings;
+    private List<Rating> ratings;
 }

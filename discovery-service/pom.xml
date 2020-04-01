@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>io.javabrains</groupId>
-	<artifactId>discovery-server</artifactId>
+	<artifactId>discovery-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>discovery-server</name>
-	<description>Service discovery server</description>
+	<name>discovery-service</name>
+	<description>Service discovery</description>
 
 	<properties>
 		<java.version>11</java.version>

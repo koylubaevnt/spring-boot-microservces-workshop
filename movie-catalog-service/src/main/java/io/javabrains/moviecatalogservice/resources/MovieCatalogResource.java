@@ -24,34 +24,32 @@ public class MovieCatalogResource {
     private final WebClient.Builder webClientBuilder;
 
     // for custom control, if needed
-    private final DiscoveryClient discoveryClient;
+    //private final DiscoveryClient discoveryClient;
 
     @Autowired
     public MovieCatalogResource(RestTemplate restTemplate,
-                                WebClient.Builder webClientBuilder,
-                                DiscoveryClient discoveryClient) {
+                                WebClient.Builder webClientBuilder) {
         this.restTemplate = restTemplate;
         this.webClientBuilder = webClientBuilder;
-        this.discoveryClient = discoveryClient;
     }
 
     @GetMapping("/{userId}")
     public List<CatalogItem> getCatalog(@PathVariable("userId") String userId) {
 
         // get all rated movie IDs
-        UserRating ratings = webClientBuilder.build()
+        UserRating userRating = webClientBuilder.build()
                 .get()
                 .uri("http://rating-data-service/ratings/users/" + userId)
                 .retrieve()
                 .bodyToMono(UserRating.class)
                 .block();
 
-        return ratings.getUserRatings().stream()
+        return userRating.getRatings().stream()
                 .map(rating -> {
                     // for each movie ID call movie info service and get details
                     Movie movie = restTemplate.getForObject("http://movie-info-service/movies/" + rating.getMovieId(), Movie.class);
                     // put them together
-                    return new CatalogItem(movie.getName(), "Desc", rating.getRating());
+                    return new CatalogItem(movie.getName(), movie.getDescription(), rating.getRating());
                 })
                 .collect(Collectors.toList());
     }
