@@ -1,6 +1,7 @@
 package io.javabrains.moviecatalogservice.services;
 
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
 import io.javabrains.moviecatalogservice.models.Rating;
 import io.javabrains.moviecatalogservice.models.UserRating;
 import lombok.AllArgsConstructor;
@@ -19,7 +20,12 @@ public class UserRatingInfo {
     // for custom control, if needed
     //private final DiscoveryClient discoveryClient;
 
-    @HystrixCommand(fallbackMethod = "getFallbackUserRating")
+    @HystrixCommand(fallbackMethod = "getFallbackUserRating",
+        commandProperties = {
+            @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "2000"),
+            @HystrixProperty(name = "circuitBreaker.requestVolumeThreshold", value = "6"),
+            @HystrixProperty(name = "circuitBreaker.errorThresholdPercentage", value = "50"),
+            @HystrixProperty(name = "circuitBreaker.sleepWindowInMilliseconds", value = "5000")})
     public UserRating getUserRating(@PathVariable("userId") String userId) {
         return webClientBuilder.build()
                 .get()

@@ -1,6 +1,7 @@
 package io.javabrains.moviecatalogservice.services;
 
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
 import io.javabrains.moviecatalogservice.models.CatalogItem;
 import io.javabrains.moviecatalogservice.models.Movie;
 import io.javabrains.moviecatalogservice.models.Rating;
@@ -17,7 +18,12 @@ public class MovieInfo {
     // for custom control, if needed
     //private final DiscoveryClient discoveryClient;
 
-    @HystrixCommand(fallbackMethod = "getFallbackCatalogItem")
+    @HystrixCommand(fallbackMethod = "getFallbackCatalogItem",
+            commandProperties = {
+                    @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "5000"),
+                    @HystrixProperty(name = "circuitBreaker.requestVolumeThreshold", value = "6"),
+                    @HystrixProperty(name = "circuitBreaker.errorThresholdPercentage", value = "70"),
+                    @HystrixProperty(name = "circuitBreaker.sleepWindowInMilliseconds", value = "10000")})
     public CatalogItem getCatalogItem(Rating rating) {
         Movie movie = restTemplate.getForObject("http://movie-info-service/movies/" + rating.getMovieId(), Movie.class);
         // put them together
