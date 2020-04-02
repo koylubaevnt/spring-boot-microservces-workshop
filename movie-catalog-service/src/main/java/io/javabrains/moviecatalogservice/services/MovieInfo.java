@@ -19,6 +19,11 @@ public class MovieInfo {
     //private final DiscoveryClient discoveryClient;
 
     @HystrixCommand(fallbackMethod = "getFallbackCatalogItem",
+            threadPoolKey = "movieInfoPool",
+            threadPoolProperties = {
+                @HystrixProperty(name = "coreSize", value = "30"),
+                @HystrixProperty(name = "maxQueueSize", value = "20")
+            },
             commandProperties = {
                     @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "5000"),
                     @HystrixProperty(name = "circuitBreaker.requestVolumeThreshold", value = "6"),

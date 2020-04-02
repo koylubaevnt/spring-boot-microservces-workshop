@@ -21,7 +21,12 @@ public class UserRatingInfo {
     //private final DiscoveryClient discoveryClient;
 
     @HystrixCommand(fallbackMethod = "getFallbackUserRating",
-        commandProperties = {
+            threadPoolKey = "userRatingInfoPool",
+            threadPoolProperties = {
+                    @HystrixProperty(name = "coreSize", value = "20"),
+                    @HystrixProperty(name = "maxQueueSize", value = "10")
+            },
+            commandProperties = {
             @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "2000"),
             @HystrixProperty(name = "circuitBreaker.requestVolumeThreshold", value = "6"),
             @HystrixProperty(name = "circuitBreaker.errorThresholdPercentage", value = "50"),
