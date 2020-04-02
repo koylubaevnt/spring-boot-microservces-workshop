@@ -1,4 +1,4 @@
-package io.javabrains.moviecatalogservice.model;
+package io.javabrains.moviecatalogservice.models;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
