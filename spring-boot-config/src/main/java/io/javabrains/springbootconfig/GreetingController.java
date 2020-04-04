@@ -2,6 +2,7 @@ package io.javabrains.springbootconfig;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -29,6 +30,9 @@ public class GreetingController {
     @Autowired
     private DbSettings dbSettings;
 
+    @Autowired
+    private Environment environment;
+
     @RequestMapping("/greeting")
     public String greeting() {
         return String.join(" : ",
@@ -38,5 +42,10 @@ public class GreetingController {
                 listValues.toString(),
                 dbValue.toString(),
                 dbSettings.toString());
+    }
+
+    @RequestMapping("/envdetails")
+    public String getEnvironment() {
+        return environment.toString();
     }
 }
