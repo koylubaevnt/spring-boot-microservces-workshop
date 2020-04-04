@@ -1,0 +1,18 @@
+app:
+  name: My App
+  description: Welcome to ${app.name}
+
+my:
+  greeting: Hello World Yaml
+  list:
+    values: One,Two,Three
+
+dbValues: "{connectionString: 'http://___', userName: 'foo', password: 'pass'}"
+
+db:
+  connection: "{connectionString: 'http://___', userName: 'foo', password: 'pass'}"
+  host: 127.0.0.1
+  port: 1200
+
+# Not use for production! It's expose sensitive data
+management.endpoints.web.exposure.include: "*"
